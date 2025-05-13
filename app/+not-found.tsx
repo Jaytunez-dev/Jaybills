@@ -1,5 +1,7 @@
-import { View, StyleSheet } from 'react-native';
-import { Link, Stack } from 'expo-router';
+import { Text, View, StyleSheet } from 'react-native';
+import { Image } from 'expo-image';
+
+const PlaceholderImage = require('@/assets/images/react-logo.png');
 
 export default function NotFoundScreen() {
   return (
@@ -17,7 +19,7 @@ export default function NotFoundScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'brown',
+    backgroundColor: 'browne',
     justifyContent: 'center',
     alignItems: 'center',
   },
