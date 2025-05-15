@@ -1,52 +1,68 @@
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ImageSourcePropType } from 'react-native';
 import Button from '@/components/Button';
-
-import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { useState } from 'react';
 
 import CircleButton from '@/components/CircleButton';
 import ImageViewer from '@/components/ImageViewer';
 import IconButton from '@/components/IconButton';
+import EmojiPicker from '@/components/EmojiPicker';
+import EmojiList from '@/components/EmojiList';
+import EmojiSticker from '@/components/EmojiSticker';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const PlaceholderImage = require('@/assets/images/react-logo.png');
 
 export default function Index() {
-  const [selectedImage, setSelectedImage] = useState<string | undefined>(undefined);
-  const [showAppOptions, setShowAppOptions] = useState<boolean>(false);
+  return (
+    <View style={styles.container}>
+      const [selectedImage, setSelectedImage] = useState<string | undefined>(undefined);
 
-  const pickImageAsync = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
+      const [showAppOptions, setShowAppOptions] = useState<boolean>(false);
+
+      const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+
+      const [pickedEmoji, setPickedEmoji] = useState<ImageSourcePropType | undefined>(undefined);
+
+      const pickImageAsync = async () => {
+      let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
       allowsEditing: true,
       quality: 1,
-    });
+      });
 
-    if (!result.canceled) {
+      if (!result.canceled) {
       console.log(result);
+      setSelectedImage(result.assets[0].uri);
       setShowAppOptions(true);
-    } else {
+      } else {
       alert('You did not select any image.');
-    }
-  };
+      }
+      };
 
-  const onReset = () => {
-    setShowAppOptions(false);
-  };
+      const onReset = () => {
+      setShowAppOptions(false);
+      };
 
-  const onAddSticker = () => {
-    // we will implement this later
-  };
+      const onAddSticker = () => {
+      setIsModalVisible(true);
+      };
 
-  const onSaveImageAsync = async () => {
-    // we will implement this later
-  };
+      const onModalClose = () => {
+      setIsModalVisible(false)
+      }
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.imageContainer}>
-        <ImageViewer imgSource={PlaceholderImage} selectedImage={selectedImage} />
-      </View>
+      const onSaveImageAsync = async () => {
+    
+      };
+
+      return (
+      <View style={styles.container}>
+        <View style={styles.imageContainer}>
+          <ImageViewer imgSource={PlaceholderImage} selectedImage={selectedImage} />
+          {pickedEmoji && <EmojiSticker imageSize={40}stickerSource={pickedEmoji} />}
+        </View>
+
       {showAppOptions ? (
         <View style={styles.optionsContainer}>
           <View style={styles.optionsRow}>
@@ -55,12 +71,17 @@ export default function Index() {
             <IconButton icon="save-alt" label="Save" onPress={onSaveImageAsync} />
           </View>
         </View>
+
       ) : (
       <View style={styles.footerContainer}>
         <Button theme="primary" label="Choose a photo" onPress={pickImageAsync}/>
+
         <Button label="Use this photo" onPress={() => setShowAppOptions(true)} />
       </View>
       )}
+      <EmojiPicker isVisible = {isModalVisible} onClose ={onModalClose}>
+        <EmojiList onSelect={setPickedEmoji} onCloseModal={onModalClose} />
+      </EmojiPicker>
     </View>
   );
 }
